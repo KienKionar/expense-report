@@ -22,7 +22,7 @@ export default function AddExpenseDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="mb-4">+ Tambah Pengeluaran</Button>
+        <Button className="mb-4 cursor-pointer">+ Tambah Pengeluaran</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
