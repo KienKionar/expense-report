@@ -13,6 +13,7 @@ import ExpenseCategoryFilter from "@/components/expense/ExpenseCategoryFilter";
 import DeleteConfirmDialog from "@/components/common/DeleteConfirmDialog";
 import { Button } from "@/components/ui/button";
 import EditExpenseDialog from "@/components/expense/EditExpenseDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -148,29 +149,54 @@ export default function DashboardPage() {
     <RequireAuth>
       <MainLayout>
         <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+            {loading ? (
+              <Skeleton className="h-8 w-1/3" />
+            ) : (
+              <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+            )}
 
-            <div className="flex flex-col">
-              <AddExpenseDialog onRefetch={fetchExpenses} />
-              <ExpenseCategoryFilter
-                selectedCategory={selectedCategory}
-                onChange={(val) => setSelectedCategory(val)}
-              />
-              <input
-                type="text"
-                placeholder="Cari pengeluaran..."
-                className="border rounded px-3 py-2 w-full md:w-[300px]"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+            {loading ? (
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-10 w-[300px]" />
+                <Skeleton className="h-10 w-[300px]" />
+                <Skeleton className="h-10 w-[300px]" />
+              </div>
+            ) : (
+              <div className="flex flex-col justify-center items-center gap-3">
+                <div className="flex gap-3">
+                  <AddExpenseDialog onRefetch={fetchExpenses} />
+                  <ExpenseCategoryFilter
+                    selectedCategory={selectedCategory}
+                    onChange={(val) => setSelectedCategory(val)}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Cari pengeluaran..."
+                    className="border rounded px-3 py-2 w-full md:w-[300px]"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {loading ? (
-            <p className="text-blue-600 text-center animate-pulse">
-              Loading...
-            </p>
+            <>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-[120px] w-full rounded-md" />
+                ))}
+              </div>
+
+              <div className="mt-8">
+                <Skeleton className="h-6 w-1/4 mb-4" />
+                <Skeleton className="h-[250px] w-full max-w-2xl mx-auto rounded-md" />
+              </div>
+            </>
           ) : expenses.length === 0 ? (
             <p className="text-red-600 text-center">Belum ada pengeluaran.</p>
           ) : (

@@ -2,6 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Textarea } from "../ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "../ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface Category {
   id: number;
@@ -91,52 +106,66 @@ export default function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
     >
       <h2 className="text-xl font-semibold">Tambah Pengeluaran</h2>
 
-      <input
+      <Input
         type="number"
         placeholder="Jumlah (Rp)"
-        className="w-full border rounded px-3 py-2"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         required
       />
 
-      <select
-        className="w-full border rounded px-3 py-2"
+      <Select
         value={categoryId}
-        onChange={(e) => setCategoryId(e.target.value)}
+        onValueChange={(value) => setCategoryId(value)}
         required
       >
-        <option value="">Pilih Kategori</option>
-        {categories.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.icon} {cat.name}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger>
+          <SelectValue placeholder="Pilih Kategori" />
+        </SelectTrigger>
+        <SelectContent>
+          {categories.map((cat) => (
+            <SelectItem key={cat.id} value={String(cat.id)}>
+              {cat.icon} {cat.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-      <input
-        type="text"
+      <Textarea
         placeholder="Deskripsi (opsional)"
-        className="w-full border rounded px-3 py-2"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      <input
-        type="date"
-        className="w-full border rounded px-3 py-2"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        required
-      />
+      {/* Date Picker */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date ? format(new Date(date), "PPP") : <span>Pilih Tanggal</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={date ? new Date(date) : undefined}
+            onSelect={(day) =>
+              setDate(day ? day.toLocaleDateString("sv-SE") : "")
+            }
+            // initialFocus
+          />
+        </PopoverContent>
+      </Popover>
 
-      <button
-        type="submit"
-        className="bg-sky-500 text-white px-4 py-2 rounded w-full disabled:opacity-50"
-        disabled={loading}
-      >
+      <Button type="submit" disabled={loading} className="w-full">
         {loading ? "Menyimpan..." : "Simpan"}
-      </button>
+      </Button>
     </form>
   );
 }
