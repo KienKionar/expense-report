@@ -27,7 +27,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Password salah" }, { status: 401 });
     }
 
-    const token = generateToken({ id: user.id, email: user.email });
+    const token = generateToken({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
     console.log("TOKEN:", token);
 
     return NextResponse.json(

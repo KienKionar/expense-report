@@ -1,34 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectContent,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
-interface Props {
-  categories: { id: number; name: string; icon?: string }[];
+type Props = {
   selectedCategory: string;
   onChange: (value: string) => void;
-}
+};
 
 export default function ExpenseCategoryFilter({
-  categories,
   selectedCategory,
   onChange,
 }: Props) {
+  const [categories, setCategories] = useState<
+    { id: number; name: string; icon?: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch {
+        toast.error("Gagal ambil kategori");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <Select value={selectedCategory} onValueChange={onChange}>
-      <SelectTrigger className="w-64 mb-4">
-        <SelectValue placeholder="Pilih Kategori" />
+      <SelectTrigger className="w-full md:w-[300px] mb-4">
+        <SelectValue placeholder="Pilih kategori" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">Semua</SelectItem>
+        <SelectItem value="all">Semua Kategori ⚙️</SelectItem>
         {categories.map((cat) => (
           <SelectItem key={cat.id} value={String(cat.id)}>
-            {cat.icon} {cat.name}
+            {" "}
+            {/* ✅ pakai id */}
+            {cat.name} {cat.icon && <span className="ml-2">{cat.icon}</span>}
           </SelectItem>
         ))}
       </SelectContent>

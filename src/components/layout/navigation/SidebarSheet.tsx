@@ -11,11 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import NavItem from "./NavItem";
-import { Home, LineChart, Settings } from "lucide-react"; // Optional icons
+import { Home, LineChart } from "lucide-react"; // Optional icons
 
 export default function SidebarSheet() {
-  const pathname = usePathname();
-
   return (
     <Sheet>
       <SheetTrigger asChild>

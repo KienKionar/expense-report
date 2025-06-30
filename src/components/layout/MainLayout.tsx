@@ -1,23 +1,26 @@
 "use client";
 
-import { ReactNode, useState } from "react";
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import { ReactNode, useEffect, useState } from "react";
 import SidebarSheet from "./navigation/SidebarSheet";
 import { toast } from "sonner";
+import { getUserFromToken } from "@/app/lib/getUserFromToken";
+import { Button } from "../ui/button";
 
 type Props = {
   children: ReactNode;
 };
 
-const navItems = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Laporan", href: "/laporan" },
-  { label: "Kategori", href: "/kategori" },
-];
-
 export default function MainLayout({ children }: Props) {
   //   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getUserFromToken();
+      setUserName(user?.name || null);
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <>
@@ -27,9 +30,14 @@ export default function MainLayout({ children }: Props) {
         <header className="bg-white shadow px-4 py-3 flex items-center justify-between sticky top-0 z-10">
           <SidebarSheet />
 
-          <div className="font-semibold text-gray-800">Hi, Rizal 👋</div>
-          <button
-            className="text-red-500 hover:underline text-sm"
+          <div className="font-semibold text-gray-800">
+            {userName ? `Hi, ${userName} 👋` : "Loading..."}
+          </div>
+
+          <Button
+            variant="outline"
+            color="red"
+            className="text-red-500 hover:bg-red-600 hover:text-white cursor-pointer text-sm"
             onClick={async () => {
               toast.success("Berhasil logout");
               localStorage.removeItem("token");
@@ -39,7 +47,7 @@ export default function MainLayout({ children }: Props) {
             }}
           >
             Logout
-          </button>
+          </Button>
         </header>
 
         <main className="p-6 flex-1">{children}</main>
